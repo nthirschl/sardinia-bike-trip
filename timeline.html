@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline — Sardinia Trip</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.noah-wynne { background: var(--accent); }
+    .legend-dot.fallon { background: var(--blue); }
+    .legend-dot.everyone { background: var(--green); }
+
+    .day {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .day-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .day-date {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      white-space: nowrap;
+    }
+
+    .day-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .events {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-left: 1.5rem;
+      border-left: 2px solid var(--border);
+    }
+
+    .event {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .event::before {
+      content: '';
+      position: absolute;
+      left: -1.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+    }
+
+    .event.noah-wynne::before { background: var(--accent); border-color: var(--accent); }
+    .event.fallon::before { background: var(--blue); border-color: var(--blue); }
+    .event.everyone::before { background: var(--green); border-color: var(--green); }
+
+    .event-time {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      min-width: 55px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .event-body { flex: 1; }
+
+    .event-title {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .event-detail {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .tag.flight { background: var(--accent-light); color: var(--accent); }
+    .tag.ferry { background: var(--purple-light); color: var(--purple); }
+    .tag.stay { background: var(--green-light); color: var(--green); }
+    .tag.bike { background: #fff3cd; color: #856404; }
+    .tag.bus { background: var(--purple-light); color: var(--purple); }
+    .tag.activity { background: #fff3cd; color: #856404; }
+    .tag.tbd { background: #f0f0f0; color: #999; }
+
+    .day-banner {
+      padding: 1rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-left: 1.5rem;
+      border-left: 3px solid var(--green);
+    }
+
+    .day-banner .banner-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .day-banner .banner-detail {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .open-items {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .open-items h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
+
+    .open-items ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .open-items li {
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .open-items li::before {
+      content: '\25CB\0020';
+      color: var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .legend {
+        gap: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .day-header {
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .day-date {
+        font-size: 1.25rem;
+      }
+
+      .events {
+        padding-left: 1rem;
+      }
+
+      .event {
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.6rem 0.75rem;
+      }
+
+      .event::before {
+        left: -1.35rem;
+        width: 8px;
+        height: 8px;
+      }
+
+      .event-time {
+        min-width: auto;
+        font-size: 0.78rem;
+      }
+
+      .event-title {
+        font-size: 0.88rem;
+      }
+
+      .tag {
+        font-size: 0.62rem;
+        padding: 0.1rem 0.4rem;
+        margin-left: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="index.html">Sardinia Trip</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html" class="active">Timeline</a></li>
+      <li><a href="map.html">Map</a></li>
+    </ul>
+  </nav>
+
+  <div class="page">
+    <div class="page-header">
+      <h1>Timeline</h1>
+      <div class="subtitle">March 2026 &middot; Sardinia, Italy</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot noah-wynne"></div> Noah &amp; Wynne</div>
+      <div class="legend-item"><div class="legend-dot fallon"></div> Fallon</div>
+      <div class="legend-item"><div class="legend-dot everyone"></div> Everyone</div>
+    </div>
+
+    <!-- Mar 7 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Sat, Mar 7</div>
+        <div class="day-label">Arrival day</div>
+      </div>
+      <div class="events">
+        <div class="event noah-wynne">
+          <div class="event-time">11:05</div>
+          <div class="event-body">
+            <div class="event-title">Depart Barcelona <span class="tag flight">Flight</span></div>
+            <div class="event-detail">Noah &amp; Wynne · VY6164 · BCN → CAG</div>
+          </div>
+        </div>
+        <div class="event noah-wynne">
+          <div class="event-time">12:35</div>
+          <div class="event-body">
+            <div class="event-title">Arrive Cagliari <span class="tag flight">Flight</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Cagliari Elmas Airport (CAG)</div>
+          </div>
+        </div>
+        <div class="event noah-wynne">
+          <div class="event-time">PM</div>
+          <div class="event-body">
+            <div class="event-title">Pick up rental bikes <span class="tag bike">Bike</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Sardinia Cycling · Maglia Nera Caf&eacute;, Via Vittorio Emanuele 27, Quartu Sant'Elena</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 8 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Sun, Mar 8</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 9 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Mon, Mar 9</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 10 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Tue, Mar 10</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 11 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Wed, Mar 11</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 12 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Thu, Mar 12</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 13 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Fri, Mar 13</div>
+        <div class="day-label">TBD</div>
+      </div>
+      <div class="events">
+        <div class="event everyone">
+          <div class="event-time"></div>
+          <div class="event-body">
+            <div class="event-title">Plans TBD <span class="tag tbd">TBD</span></div>
+            <div class="event-detail">Details to come</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 14 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Sat, Mar 14</div>
+        <div class="day-label">Bike return &amp; travel to Olbia</div>
+      </div>
+      <div class="events">
+        <div class="event noah-wynne">
+          <div class="event-time">18:30</div>
+          <div class="event-body">
+            <div class="event-title">Return rental bikes <span class="tag bike">Bike</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Sardinia Cycling · Piazza Antonio Segni 7, Arzachena</div>
+          </div>
+        </div>
+        <div class="event noah-wynne">
+          <div class="event-time">PM</div>
+          <div class="event-body">
+            <div class="event-title">Arzachena → Olbia <span class="tag bus">Bus</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Public transport · ~30 min · Times TBD</div>
+          </div>
+        </div>
+        <div class="event noah-wynne">
+          <div class="event-time">eve</div>
+          <div class="event-body">
+            <div class="event-title">Overnight in Olbia <span class="tag stay">Stay</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Accommodation TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mar 15 -->
+    <div class="day">
+      <div class="day-header">
+        <div class="day-date">Sun, Mar 15</div>
+        <div class="day-label">Departure day</div>
+      </div>
+      <div class="events">
+        <div class="event noah-wynne">
+          <div class="event-time">11:00</div>
+          <div class="event-body">
+            <div class="event-title">Depart Olbia <span class="tag flight">Flight</span></div>
+            <div class="event-detail">Noah &amp; Wynne · V7 1444 · OLB → BCN (T2)</div>
+          </div>
+        </div>
+        <div class="event noah-wynne">
+          <div class="event-time">12:25</div>
+          <div class="event-body">
+            <div class="event-title">Arrive Barcelona <span class="tag flight">Flight</span></div>
+            <div class="event-detail">Noah &amp; Wynne · Barcelona T2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="open-items">
+      <h2>Open Items</h2>
+      <ul>
+        <li>Fallon's arrival &amp; departure flights</li>
+        <li>Accommodations for the full trip</li>
+        <li>Arzachena → Olbia bus/transport times on Mar 14</li>
+        <li>Overnight accommodation in Olbia (night of Mar 14)</li>
+        <li>Daily activity &amp; route plans</li>
+        <li>Restaurant &amp; dining plans</li>
+      </ul>
+    </div>
+
+    <div class="page-footer">
+      Last updated: Feb 2026
+    </div>
+  </div>
+</body>
+</html>

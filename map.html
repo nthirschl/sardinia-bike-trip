@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map — Sardinia Trip</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { overflow: hidden; }
+
+    .map-layout {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+
+    .sidebar {
+      width: 340px;
+      min-width: 340px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .sidebar h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .sidebar h2:first-of-type { margin-top: 0; }
+
+    .place {
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 0.35rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .place:hover {
+      background: var(--bg);
+      border-color: var(--border);
+    }
+
+    .place-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .place-detail {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      vertical-align: middle;
+    }
+
+    .dot.accommodation { background: var(--accent); }
+    .dot.poi { background: var(--blue); }
+    .dot.transport { background: var(--purple); }
+    .dot.route { background: var(--green); }
+
+    .route-stats {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .legend-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .legend-bar span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    #map {
+      flex: 1;
+      min-height: 100%;
+    }
+
+    .custom-popup .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .popup-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .popup-detail {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .no-places-msg {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f9f6f0;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .sidebar-toggle {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .map-layout {
+        flex-direction: column;
+        height: calc(100vh - 44px);
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 44px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        min-width: 0;
+        z-index: 900;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        padding: 1rem;
+      }
+
+      .sidebar.open {
+        transform: translateY(0);
+      }
+
+      .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 950;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.5rem 1.1rem;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text);
+        cursor: pointer;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      }
+
+      #map {
+        height: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="index.html">Sardinia Trip</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html">Timeline</a></li>
+      <li><a href="map.html" class="active">Map</a></li>
+    </ul>
+  </nav>
+
+  <button class="sidebar-toggle" onclick="toggleSidebar()">&#9776; Places</button>
+
+  <div class="map-layout">
+    <div class="sidebar" id="sidebar">
+      <h1>Map</h1>
+      <div class="subtitle">Accommodations, transport &amp; points of interest</div>
+
+      <div class="legend-bar">
+        <span><span class="dot accommodation"></span> Accommodation</span>
+        <span><span class="dot transport"></span> Transport hub</span>
+        <span><span class="dot poi"></span> Point of interest</span>
+        <span><span class="dot route"></span> Bike route</span>
+      </div>
+
+      <h2>Transport</h2>
+      <div class="place" onclick="flyTo(39.2515, 9.0543, 13)">
+        <div class="place-name"><span class="dot transport"></span>Cagliari Airport (CAG)</div>
+        <div class="place-detail">Arrival · Mar 7 · VY6164 from Barcelona</div>
+      </div>
+      <div class="place" onclick="flyTo(40.8986, 9.5176, 13)">
+        <div class="place-name"><span class="dot transport"></span>Olbia Airport (OLB)</div>
+        <div class="place-detail">Departure · Mar 15 · V7 1444 to Barcelona</div>
+      </div>
+
+      <h2>Bike Rental</h2>
+      <div class="place" onclick="flyTo(39.2404, 9.1870, 15)">
+        <div class="place-name"><span class="dot transport"></span>Sardinia Cycling — Pickup</div>
+        <div class="place-detail">Mar 7 · Maglia Nera Caf&eacute;, Via Vittorio Emanuele 27, Quartu Sant'Elena</div>
+      </div>
+      <div class="place" onclick="flyTo(41.0788, 9.3883, 15)">
+        <div class="place-name"><span class="dot transport"></span>Sardinia Cycling — Dropoff</div>
+        <div class="place-detail">Mar 14, 18:30 · Piazza Antonio Segni 7, Arzachena</div>
+      </div>
+
+      <h2>Bike Route</h2>
+      <div class="place" onclick="fitRoute('full')">
+        <div class="place-name"><span class="dot route"></span>Alternative Transardinia</div>
+        <div class="place-detail">Full route · Cagliari area → North Sardinia · <a href="https://ridewithgps.com/routes/54052235" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats" id="full-stats">Loading...</div>
+      </div>
+
+      <h2>Accommodations</h2>
+      <div class="no-places-msg">
+        No accommodations added yet. Details to come!
+      </div>
+
+      <h2>Points of Interest</h2>
+      <div class="no-places-msg">
+        No points of interest added yet. Details to come!
+      </div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
+  <script>
+    // ── Map init ──
+    const map = L.map('map', {
+      zoomControl: true,
+    }).setView([39.95, 9.15], 8);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // ── Custom icon factory ──
+    function makeIcon(color) {
+      return L.divIcon({
+        className: '',
+        html: `<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill="${color}"/>
+          <circle cx="14" cy="13" r="5.5" fill="white"/>
+        </svg>`,
+        iconSize: [28, 36],
+        iconAnchor: [14, 36],
+        popupAnchor: [0, -36],
+      });
+    }
+
+    const icons = {
+      accommodation: makeIcon('#1a6b8a'),
+      transport: makeIcon('#6e7b9a'),
+      poi: makeIcon('#b5653a'),
+    };
+
+    // ── Markers ──
+    const places = [
+      {
+        name: "Cagliari Airport (CAG)",
+        detail: "Arrival · Mar 7<br>VY6164 from Barcelona · Arrives 12:35",
+        lat: 39.2515, lng: 9.0543,
+        type: 'transport',
+      },
+      {
+        name: "Olbia Airport (OLB)",
+        detail: "Departure · Mar 15<br>V7 1444 to Barcelona (T2) · Departs 11:00",
+        lat: 40.8986, lng: 9.5176,
+        type: 'transport',
+      },
+      {
+        name: "Sardinia Cycling — Pickup",
+        detail: "Mar 7 · Gravel bike rental<br>Maglia Nera Caf\u00e9, Via Vittorio Emanuele 27<br>Quartu Sant'Elena",
+        lat: 39.2404, lng: 9.1870,
+        type: 'transport',
+      },
+      {
+        name: "Sardinia Cycling — Dropoff",
+        detail: "Mar 14, 18:30 · Return bikes<br>Piazza Antonio Segni 7, Arzachena",
+        lat: 41.0788, lng: 9.3883,
+        type: 'transport',
+      },
+    ];
+
+    places.forEach(p => {
+      L.marker([p.lat, p.lng], { icon: icons[p.type] })
+        .addTo(map)
+        .bindPopup(
+          `<div class="popup-title">${p.name}</div><div class="popup-detail">${p.detail}</div>`,
+          { className: 'custom-popup', maxWidth: 260 }
+        );
+    });
+
+    // ── Fit all markers (initial view) ──
+    const bounds = L.latLngBounds(places.map(p => [p.lat, p.lng]));
+    map.fitBounds(bounds, { padding: [60, 60] });
+
+    // ── GPX Routes ──
+    const routes = {};
+
+    function loadGPX(id, url, color) {
+      const gpxLayer = new L.GPX(url, {
+        async: true,
+        polyline_options: {
+          color: color,
+          weight: 3.5,
+          opacity: 0.85,
+          lineCap: 'round',
+        },
+        marker_options: {
+          startIconUrl: null,
+          endIconUrl: null,
+          shadowUrl: null,
+          wptIconUrls: { '': null },
+        },
+      });
+
+      gpxLayer.on('loaded', function(e) {
+        const gpx = e.target;
+        routes[id] = gpx;
+
+        const dist = (gpx.get_distance() / 1000).toFixed(1);
+        const elevGain = Math.round(gpx.get_elevation_gain());
+        const statsEl = document.getElementById(id + '-stats');
+        if (statsEl) {
+          statsEl.textContent = dist + ' km \u00B7 ' + elevGain + ' m elevation gain';
+        }
+      });
+
+      gpxLayer.addTo(map);
+    }
+
+    const cacheBust = '?v=' + Date.now();
+    loadGPX('full', 'bike-route/Alternative Transardinia.gpx' + cacheBust, '#4a8a6a');
+
+    function fitRoute(id) {
+      if (routes[id]) {
+        map.fitBounds(routes[id].getBounds(), { padding: [60, 60] });
+        closeSidebar();
+      }
+    }
+
+    // ── Sidebar fly-to ──
+    function flyTo(lat, lng, zoom) {
+      map.flyTo([lat, lng], zoom, { duration: 1 });
+      closeSidebar();
+    }
+
+    // ── Mobile sidebar toggle ──
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  </script>
+</body>
+</html>
