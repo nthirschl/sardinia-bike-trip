@@ -253,6 +253,11 @@
         <div class="place-detail"><a href="https://ridewithgps.com/routes/54079629" target="_blank">RideWithGPS</a></div>
         <div class="route-stats">49 mi &middot; 5,120 ft elevation gain</div>
       </div>
+      <div class="place" onclick="fitRoute('day3')">
+        <div class="place-name"><span class="dot route"></span>Day 3: Jerzu → Villagrande Strisaili</div>
+        <div class="place-detail"><a href="https://ridewithgps.com/routes/54084714" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats">33.3 mi &middot; 4,579 ft elevation gain</div>
+      </div>
 
       <h2>Accommodations</h2>
       <div class="place" onclick="flyTo(39.5160, 9.2901, 15)">
@@ -262,6 +267,10 @@
       <div class="place" onclick="flyTo(39.7934, 9.5169, 15)">
         <div class="place-name"><span class="dot accommodation"></span>Casa Cuccureddu 2</div>
         <div class="place-detail">Night 2 · Mar 9 · Jerzu · <a href="https://www.airbnb.com/rooms/1513590060231311995" target="_blank">Airbnb</a></div>
+      </div>
+      <div class="place" onclick="flyTo(39.9606, 9.5057, 15)">
+        <div class="place-name"><span class="dot accommodation"></span>Il Vicoletto Aria Ona</div>
+        <div class="place-detail">Night 3 · Mar 10 · Via Vittorio Emanuele 25, Villagrande Strisaili · <a href="https://www.booking.com/Share-l0QSLKn" target="_blank">Booking.com</a></div>
       </div>
 
       <h2>Points of Interest</h2>
@@ -345,6 +354,12 @@
         lat: 39.7934, lng: 9.5169,
         type: 'accommodation',
       },
+      {
+        name: "Il Vicoletto Aria Ona",
+        detail: "Night 3 · Mar 10<br>Via Vittorio Emanuele 25, Villagrande Strisaili<br>Check-in 15:00–22:00 · Checkout 08:00–11:00<br><a href='https://www.booking.com/Share-l0QSLKn' target='_blank'>Booking.com</a>",
+        lat: 39.9606, lng: 9.5057,
+        type: 'accommodation',
+      },
     ];
 
     places.forEach(p => {
@@ -390,6 +405,7 @@
     const cacheBust = '?v=' + Date.now();
     loadGPX('day1', 'bike-route/Sardinia_Day_1.gpx' + cacheBust, '#4a8a6a');
     loadGPX('day2', 'bike-route/Sardinia_Day_2.gpx' + cacheBust, '#2a7b9b');
+    loadGPX('day3', 'bike-route/Sardinia_Day_3.gpx' + cacheBust, '#c07a3a');
 
     function fitRoute(id) {
       if (routes[id]) {
