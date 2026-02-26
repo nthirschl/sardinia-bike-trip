@@ -245,13 +245,13 @@
       <h2>Bike Route</h2>
       <div class="place" onclick="fitRoute('day1')">
         <div class="place-name"><span class="dot route"></span>Day 1: Cagliari → Silìus</div>
-        <div class="place-detail">41 mi · <a href="https://ridewithgps.com/routes/54079447" target="_blank">RideWithGPS</a></div>
-        <div class="route-stats" id="day1-stats">Loading...</div>
+        <div class="place-detail"><a href="https://ridewithgps.com/routes/54079447" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats">41 mi &middot; 4,799 ft elevation gain</div>
       </div>
       <div class="place" onclick="fitRoute('day2')">
         <div class="place-name"><span class="dot route"></span>Day 2: Silìus → Jerzu</div>
-        <div class="place-detail">49 mi · <a href="https://ridewithgps.com/routes/54079629" target="_blank">RideWithGPS</a></div>
-        <div class="route-stats" id="day2-stats">Loading...</div>
+        <div class="place-detail"><a href="https://ridewithgps.com/routes/54079629" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats">49 mi &middot; 5,120 ft elevation gain</div>
       </div>
 
       <h2>Accommodations</h2>
@@ -381,15 +381,7 @@
       });
 
       gpxLayer.on('loaded', function(e) {
-        const gpx = e.target;
-        routes[id] = gpx;
-
-        const dist = (gpx.get_distance() / 1609.34).toFixed(1);
-        const elevGain = Math.round(gpx.get_elevation_gain() * 3.28084);
-        const statsEl = document.getElementById(id + '-stats');
-        if (statsEl) {
-          statsEl.textContent = dist + ' mi \u00B7 ' + elevGain + ' ft elevation gain';
-        }
+        routes[id] = e.target;
       });
 
       gpxLayer.addTo(map);
