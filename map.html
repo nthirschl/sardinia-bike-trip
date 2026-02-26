@@ -258,6 +258,11 @@
         <div class="place-detail"><a href="https://ridewithgps.com/routes/54084714" target="_blank">RideWithGPS</a></div>
         <div class="route-stats">33.3 mi &middot; 4,579 ft elevation gain</div>
       </div>
+      <div class="place" onclick="fitRoute('days4plus')">
+        <div class="place-name"><span class="dot route"></span>Days 4+: Villagrande Strisaili → Arzachena</div>
+        <div class="place-detail"><a href="https://ridewithgps.com/routes/54084784" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats">140.9 mi &middot; 8,618 ft elevation gain</div>
+      </div>
 
       <h2>Accommodations</h2>
       <div class="place" onclick="flyTo(39.5160, 9.2901, 15)">
@@ -406,6 +411,7 @@
     loadGPX('day1', 'bike-route/Sardinia_Day_1.gpx' + cacheBust, '#4a8a6a');
     loadGPX('day2', 'bike-route/Sardinia_Day_2.gpx' + cacheBust, '#2a7b9b');
     loadGPX('day3', 'bike-route/Sardinia_Day_3.gpx' + cacheBust, '#c07a3a');
+    loadGPX('days4plus', 'bike-route/Sardinia_Days_4+.gpx' + cacheBust, '#7a5a9b');
 
     function fitRoute(id) {
       if (routes[id]) {
