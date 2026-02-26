@@ -384,11 +384,11 @@
         const gpx = e.target;
         routes[id] = gpx;
 
-        const dist = (gpx.get_distance() / 1000).toFixed(1);
-        const elevGain = Math.round(gpx.get_elevation_gain());
+        const dist = (gpx.get_distance() / 1609.34).toFixed(1);
+        const elevGain = Math.round(gpx.get_elevation_gain() * 3.28084);
         const statsEl = document.getElementById(id + '-stats');
         if (statsEl) {
-          statsEl.textContent = dist + ' km \u00B7 ' + elevGain + ' m elevation gain';
+          statsEl.textContent = dist + ' mi \u00B7 ' + elevGain + ' ft elevation gain';
         }
       });
 
