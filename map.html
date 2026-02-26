@@ -244,15 +244,24 @@
 
       <h2>Bike Route</h2>
       <div class="place" onclick="fitRoute('day1')">
-        <div class="place-name"><span class="dot route"></span>Day 1: Quartu Sant'Elena → Silìus</div>
+        <div class="place-name"><span class="dot route"></span>Day 1: Cagliari → Silìus</div>
         <div class="place-detail">41 mi · <a href="https://ridewithgps.com/routes/54079447" target="_blank">RideWithGPS</a></div>
         <div class="route-stats" id="day1-stats">Loading...</div>
+      </div>
+      <div class="place" onclick="fitRoute('day2')">
+        <div class="place-name"><span class="dot route"></span>Day 2: Silìus → Jerzu</div>
+        <div class="place-detail"><a href="https://ridewithgps.com/routes/54079629" target="_blank">RideWithGPS</a></div>
+        <div class="route-stats" id="day2-stats">Loading...</div>
       </div>
 
       <h2>Accommodations</h2>
       <div class="place" onclick="flyTo(39.5160, 9.2901, 15)">
         <div class="place-name"><span class="dot accommodation"></span>Casa Silius</div>
-        <div class="place-detail">Night 1 · Mar 8 · Via Cagliari 82, Silìus</div>
+        <div class="place-detail">Night 1 · Mar 8 · Via Cagliari 82, Silìus · <a href="https://www.booking.com/Share-ffRUM2P" target="_blank">Booking.com</a></div>
+      </div>
+      <div class="place" onclick="flyTo(39.7934, 9.5169, 15)">
+        <div class="place-name"><span class="dot accommodation"></span>Casa Cuccureddu 2</div>
+        <div class="place-detail">Night 2 · Mar 9 · Jerzu · <a href="https://www.airbnb.com/rooms/1513590060231311995" target="_blank">Airbnb</a></div>
       </div>
 
       <h2>Points of Interest</h2>
@@ -326,8 +335,14 @@
       },
       {
         name: "Casa Silius",
-        detail: "Night 1 · Mar 8<br>Via Cagliari 82, Sil\u00ecus<br>Check-in 15:00–23:30 · Checkout by 11:00",
+        detail: "Night 1 · Mar 8<br>Via Cagliari 82, Sil\u00ecus<br>Check-in 15:00–23:30 · Checkout by 11:00<br><a href='https://www.booking.com/Share-ffRUM2P' target='_blank'>Booking.com</a>",
         lat: 39.5160, lng: 9.2901,
+        type: 'accommodation',
+      },
+      {
+        name: "Casa Cuccureddu 2",
+        detail: "Night 2 · Mar 9<br>Jerzu<br>Check-in 16:00 · Checkout by 10:00<br><a href='https://www.airbnb.com/rooms/1513590060231311995' target='_blank'>Airbnb listing</a>",
+        lat: 39.7934, lng: 9.5169,
         type: 'accommodation',
       },
     ];
@@ -382,6 +397,7 @@
 
     const cacheBust = '?v=' + Date.now();
     loadGPX('day1', 'bike-route/Sardinia_Day_1.gpx' + cacheBust, '#4a8a6a');
+    loadGPX('day2', 'bike-route/Sardinia_Day_2.gpx' + cacheBust, '#2a7b9b');
 
     function fitRoute(id) {
       if (routes[id]) {
