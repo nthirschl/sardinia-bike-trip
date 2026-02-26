@@ -243,15 +243,16 @@
       </div>
 
       <h2>Bike Route</h2>
-      <div class="place" onclick="fitRoute('full')">
-        <div class="place-name"><span class="dot route"></span>Alternative Transardinia</div>
-        <div class="place-detail">Full route · Cagliari area → North Sardinia · <a href="https://ridewithgps.com/routes/54052235" target="_blank">RideWithGPS</a></div>
-        <div class="route-stats" id="full-stats">Loading...</div>
+      <div class="place" onclick="fitRoute('day1')">
+        <div class="place-name"><span class="dot route"></span>Day 1: Quartu Sant'Elena → Silìus</div>
+        <div class="place-detail">41 mi</div>
+        <div class="route-stats" id="day1-stats">Loading...</div>
       </div>
 
       <h2>Accommodations</h2>
-      <div class="no-places-msg">
-        No accommodations added yet. Details to come!
+      <div class="place" onclick="flyTo(39.5160, 9.2901, 15)">
+        <div class="place-name"><span class="dot accommodation"></span>Casa Silius</div>
+        <div class="place-detail">Night 1 · Mar 8 · Via Cagliari 82, Silìus</div>
       </div>
 
       <h2>Points of Interest</h2>
@@ -323,6 +324,12 @@
         lat: 41.0788, lng: 9.3883,
         type: 'transport',
       },
+      {
+        name: "Casa Silius",
+        detail: "Night 1 · Mar 8<br>Via Cagliari 82, Sil\u00ecus<br>Check-in 15:00–23:30 · Checkout by 11:00",
+        lat: 39.5160, lng: 9.2901,
+        type: 'accommodation',
+      },
     ];
 
     places.forEach(p => {
@@ -374,7 +381,7 @@
     }
 
     const cacheBust = '?v=' + Date.now();
-    loadGPX('full', 'bike-route/Alternative Transardinia.gpx' + cacheBust, '#4a8a6a');
+    loadGPX('day1', 'bike-route/Sardinia_Day_1.gpx' + cacheBust, '#4a8a6a');
 
     function fitRoute(id) {
       if (routes[id]) {
